@@ -15,21 +15,32 @@ b_input = st.number_input("Nilai b (batas kanan):", value=2.0)
 max_iter = st.number_input("Maksimal Iterasi:", value=20, step=1)
 
 # Toleransi
- tol_input = st.text_input("Toleransi (contoh: 1e-6)", value="1e-6")
+tol_input = st.text_input("Toleransi (contoh: 1e-6)", value="1e-6")
+
+# Konversi toleransi
+try:
+    tol = float(tol_input)
+except:
+    st.error("Toleransi tidak valid! Masukkan angka, misal: 1e-6")
+    st.stop()
 
 # Definisi fungsi
 def f(x):
-    return eval(func_input)
+    return eval(func_input, {"x": x, "np": np})
 
 # Tombol eksekusi
 if st.button("Hitung Akar"):
-    a = a_input
-    b = b_input
+    a = float(a_input)
+    b = float(b_input)
 
-    if f(a) * f(b) >= 0:
+    fa = f(a)
+    fb = f(b)
+
+    if fa * fb >= 0:
         st.error("f(a) dan f(b) harus berbeda tanda! Pilih interval lain.")
     else:
         iterasi_data = []
+
         for i in range(1, int(max_iter) + 1):
             c = (a + b) / 2
             fc = f(c)
@@ -37,16 +48,16 @@ if st.button("Hitung Akar"):
             iterasi_data.append([i, a, b, c, fc])
 
             if abs(fc) < tol:
+                st.success(f"Perkiraan akar = {c}")
                 break
 
-            if f(a) * fc < 0:
+            if fa * fc < 0:
                 b = c
+                fb = fc
             else:
                 a = c
+                fa = fc
 
-        st.success(f"Perkiraan akar = {c}")
-
-        # Tampilkan tabel iterasi
         st.subheader("Tabel Iterasi Bisection")
         st.table(
             {
