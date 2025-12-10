@@ -3,6 +3,7 @@ import numpy as np
 
 st.title("Solusi SPNL dengan Metode Bisection")
 st.write("Aplikasi ini menyelesaikan persamaan non-linear f(x)=0 menggunakan metode Bisection.")
+st.write("Masukkan fungsi f(x), interval [a,b], toleransi, dan maksimal iterasi.")
 
 # Input fungsi
 func_input = st.text_input("Masukkan fungsi f(x):", "x**3 - x - 2")
@@ -11,36 +12,25 @@ func_input = st.text_input("Masukkan fungsi f(x):", "x**3 - x - 2")
 a_input = st.number_input("Nilai a (batas kiri):", value=1.0)
 b_input = st.number_input("Nilai b (batas kanan):", value=2.0)
 
-# Maks iterasi
+# Maksimal iterasi
 max_iter = st.number_input("Maksimal Iterasi:", value=20, step=1)
 
 # Toleransi
-tol_input = st.text_input("Toleransi (contoh: 1e-6)", value="1e-6")
+tol = st.number_input("Toleransi Error:", value=1e-6, format="%.8f")
 
-# Konversi toleransi
-try:
-    tol = float(tol_input)
-except:
-    st.error("Toleransi tidak valid! Masukkan angka, misal: 1e-6")
-    st.stop()
-
-# Definisi fungsi
+# Definisi fungsi f(x)
 def f(x):
-    return eval(func_input, {"x": x, "np": np})
+    return eval(func_input)
 
 # Tombol eksekusi
 if st.button("Hitung Akar"):
-    a = float(a_input)
-    b = float(b_input)
+    a = a_input
+    b = b_input
 
-    fa = f(a)
-    fb = f(b)
-
-    if fa * fb >= 0:
+    if f(a) * f(b) >= 0:
         st.error("f(a) dan f(b) harus berbeda tanda! Pilih interval lain.")
     else:
         iterasi_data = []
-
         for i in range(1, int(max_iter) + 1):
             c = (a + b) / 2
             fc = f(c)
@@ -48,16 +38,16 @@ if st.button("Hitung Akar"):
             iterasi_data.append([i, a, b, c, fc])
 
             if abs(fc) < tol:
-                st.success(f"Perkiraan akar = {c}")
                 break
 
-            if fa * fc < 0:
+            if f(a) * fc < 0:
                 b = c
-                fb = fc
             else:
                 a = c
-                fa = fc
 
+        st.success(f"Perkiraan akar = {c}")
+
+        # Tabel hasil iterasi
         st.subheader("Tabel Iterasi Bisection")
         st.table(
             {
