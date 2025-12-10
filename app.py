@@ -15,7 +15,7 @@ b_input = st.number_input("Nilai b (batas kanan):", value=2.0)
 max_iter = st.number_input("Maksimal Iterasi:", value=20, step=1)
 
 # Toleransi
-st.number_input("Error:", value=1e-6, format="%.10f")
+ tol_input = st.text_input("Toleransi (contoh: 1e-6)", value="1e-6")
 
 # Definisi fungsi
 def f(x):
